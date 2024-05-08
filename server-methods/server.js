@@ -1,18 +1,30 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { authenticate } = require('./authentication.js')
 
 const booksDbPath = path.join(__dirname, "db", 'books.json');
 let booksDB = [];
 
-const PORT = 4000;
-const HOST_NAME = 'localhost';
+const PORT = process.env.PORT || 8080;
+const HOST_NAME = '127.0.0.1';
 
 const requestHandler = function (req, res) {
     res.setHeader("Content-Type", "application/json");
 
     if (req.url === '/books' && req.method === 'GET') {
-        getAllBooks(req, res);
+
+        authenticate(req, res)
+            .then(() => {
+                getAllBooks(req, res);
+            })
+            .catch((err) => {
+                res.writeHead(404)
+                res.end(JSON.stringify({
+                    message:err
+                }))
+            })
+        
     } else if (req.url === '/books' && req.method === 'POST') {
         addBook(req, res);
     } else if (req.url === '/books' && req.method === 'PUT') {

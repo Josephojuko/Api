@@ -7,7 +7,7 @@ const { authenticate } = require("./authentication")
 const booksDbPath = path.join(__dirname, "db", 'books.json');
 let booksDB = [];
 
-const PORT = 4000
+const PORT = process.env.PORT || 4000
 const HOST_NAME = 'localhost';
 
 const requestHandler = async function (req, res) {
